@@ -18,6 +18,9 @@ jobs:
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.5
       
+    - name: Restore NuGet Packages
+      run: nuget restore TestActionMain\TestActionMain.sln
+      
     - name: Restore Packages AppMain
       id: restoreAppMain
       run: nuget restore AppMain.sln
@@ -25,10 +28,10 @@ jobs:
         nuget-version: 6.x
 
     - name: Build Dll
-      run: dotnet build TestActionMain\Dll.csproj          
+      run: msbuild TestActionMain\Dll.csproj /p:Configuration=Release /p:Platform="AnyCPU"
 
     - name: Build AppMain
-      run: dotnet build AppMain\AppMain.csproj      
+      run: msbuild AppMain\AppMain.csproj /p:Configuration=Release /p:Platform="AnyCPU"    
       
     - name: Create Release
       id: create_release

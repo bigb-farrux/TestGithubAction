@@ -31,7 +31,7 @@ jobs:
       run: msbuild TestActionMain\Dll.csproj /p:Configuration=Release /p:Platform="AnyCPU"
 
     - name: Build AppMain
-      run: msbuild ActionMain\AppMain.csproj /p:Configuration=Release /p:Platform="AnyCPU"    
+      run: msbuild AppMain\AppMain.csproj /p:Configuration=Release /p:Platform="AnyCPU"    
       
     - name: Create Release
       id: create_release

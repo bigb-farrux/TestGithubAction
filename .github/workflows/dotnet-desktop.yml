@@ -1,23 +1,16 @@
-name: .NET CI/CD Pipeline
-
+name: .NET
+ 
 on:
   push:
-    branches: [main]
+    branches: [ "main" ]
   pull_request:
-    branches: [main]
+    branches: [ "main" ]
 
 jobs:
-  build-and-release:
-    runs-on: windows-latest
+  build:
+    runs-on: windows-2019
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-      
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '4.8.x' # Измените на версию, необходимую для вашего проекта
-
+    - uses: actions/checkout@v2
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 

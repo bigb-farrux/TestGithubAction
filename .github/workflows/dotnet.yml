@@ -19,7 +19,7 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.5
 
     - name: Restore NuGet Packages
-      run: nuget restore TestActionMain.sln
+      run: nuget restore TestActionMain\TestActionMain.sln
       
     - name: Restore Packages AppMain
       id: restoreAppMain

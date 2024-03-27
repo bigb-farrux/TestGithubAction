@@ -1,57 +1,64 @@
-name: .NET
- 
+name: .NET CI/CD Pipeline
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
-  build:
-    runs-on: windows-2019
+  build-and-release:
+    runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
-    
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.x' # Измените на версию, необходимую для вашего проекта
+
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
-    
+
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.5
-      
-    - name: Restore Packages AppMain
-      id: restoreAppMain
+
+    - name: Restore NuGet Packages for AppMain
       run: nuget restore AppMain.sln
-      env:
-        nuget-version: 6.x
 
-    - name: Add Newtonsoft
-      run: dotnet add TestActionMain\Dll.csproj package Newtonsoft.Json --version 13.0.0
+    - name: Add Newtonsoft.Json Package
+      run: dotnet add TestActionMain/Dll.csproj package Newtonsoft.Json --version 13.0.0
 
-    - name: Build Dll
-      run: dotnet build TestActionMain\Dll.csproj          
+    - name: Build Dll Project
+      run: dotnet build TestActionMain/Dll.csproj
 
-    - name: Build AppMain
-      run: dotnet build AppMain\AppMain.csproj      
+    - name: Build AppMain Project
+      run: dotnet build AppMain/AppMain.csproj
       
+    # Убедитесь, что вы создаете артефакт сборки (например, ZIP-файл) в одном из шагов сборки
+    # - name: Pack Artifacts
+    #   run: # Ваша команда для упаковки артефактов сборки
+
     - name: Create Release
-      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: v1.0.0
         release_name: Release v1.0.0
-        body: This is the release of version 1.0.0
+        body: "This is the release of version 1.0.0"
         draft: false
         prerelease: false
 
-    - name: Upload Release Assets
-      id: upload-release-assets
+    # Предполагается, что вы предварительно определили ARTIFACT_PATH
+    # Например, это может быть путь к упакованному ZIP-файлу, созданному в предыдущих шагах
+    - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ env.ARTIFACT_PATH }}
-        asset_name: artifacts.zip
+        asset_path: ./path/to/your/artifact.zip # Измените на актуальный путь к артефакту
+        asset_name: YourArtifactName.zip # Измените на имя вашего артефакта
         asset_content_type: application/zip

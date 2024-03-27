@@ -16,7 +16,7 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1.x' # Измените на версию, необходимую для вашего проекта
+        dotnet-version: '4.8.x' # Измените на версию, необходимую для вашего проекта
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
@@ -26,10 +26,7 @@ jobs:
 
     - name: Restore NuGet Packages for AppMain
       run: nuget restore AppMain.sln
-
-    - name: Add Newtonsoft.Json Package
-      run: dotnet add TestActionMain/Dll.csproj package Newtonsoft.Json --version 13.0.0
-
+      
     - name: Build Dll Project
       run: dotnet build TestActionMain/Dll.csproj
 

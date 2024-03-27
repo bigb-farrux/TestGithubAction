@@ -27,11 +27,11 @@ jobs:
       env:
         nuget-version: 6.x
 
-    - name: Build the Project with MSBuild
+    - name: Build Dll
       run: msbuild TestActionMain\Dll.csproj /p:Configuration=Release /p:Platform="AnyCPU"
-      
+
     - name: Build AppMain
-      run: dotnet build AppMain\AppMain.csproj      
+      run: msbuild ActionMain\AppMain.csproj /p:Configuration=Release /p:Platform="AnyCPU"    
       
     - name: Create Release
       id: create_release

@@ -11,44 +11,47 @@ jobs:
     runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
+    
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
-
+    
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.5
 
-    - name: Restore NuGet Packages for AppMain
+    - name: Restore NuGet Packages
+      run: nuget restore TestActionMain/Dll.csproj
+      
+    - name: Restore Packages AppMain
+      id: restoreAppMain
       run: nuget restore AppMain.sln
-      
-    - name: Build Dll Project
-      run: dotnet build TestActionMain/Dll.csproj
+      env:
+        nuget-version: 6.x
 
-    - name: Build AppMain Project
-      run: dotnet build AppMain/AppMain.csproj
-      
-    # Убедитесь, что вы создаете артефакт сборки (например, ZIP-файл) в одном из шагов сборки
-    # - name: Pack Artifacts
-    #   run: # Ваша команда для упаковки артефактов сборки
+    - name: Build Dll
+      run: msbuild TestActionMain/Dll.csproj /p:Configuration=Release /p:Platform="AnyCPU"          
 
+    - name: Build AppMain
+      run: dotnet build AppMain\AppMain.csproj      
+      
     - name: Create Release
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: v1.0.0
         release_name: Release v1.0.0
-        body: "This is the release of version 1.0.0"
+        body: This is the release of version 1.0.0
         draft: false
         prerelease: false
 
-    # Предполагается, что вы предварительно определили ARTIFACT_PATH
-    # Например, это может быть путь к упакованному ZIP-файлу, созданному в предыдущих шагах
-    - name: Upload Release Asset
+    - name: Upload Release Assets
+      id: upload-release-assets
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./path/to/your/artifact.zip # Измените на актуальный путь к артефакту
-        asset_name: YourArtifactName.zip # Измените на имя вашего артефакта
+        asset_path: ${{ env.ARTIFACT_PATH }}
+        asset_name: artifacts.zip
         asset_content_type: application/zip

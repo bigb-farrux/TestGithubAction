@@ -24,9 +24,6 @@ jobs:
       env:
         nuget-version: 6.x
 
-    - name: Add lib Newtonsoft
-      run: dotnet add package Newtonsoft.Json --version 13.0.0
-
     - name: Build Dll
       run: dotnet build TestActionMain\Dll.csproj          
 

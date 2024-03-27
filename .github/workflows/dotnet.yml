@@ -27,8 +27,12 @@ jobs:
       env:
         nuget-version: 6.x
 
-    - name: Build Dll
-      run: dotnet build TestActionMain\Dll.csproj          
+    - name: Build the Project with MSBuild
+      run: msbuild TestActionMain\Dll.csproj /p:Configuration=Release /p:Platform="AnyCPU"
+
+
+#    - name: Build Dll
+#      run: dotnet build TestActionMain\Dll.csproj          
 
     - name: Build AppMain
       run: dotnet build AppMain\AppMain.csproj      
